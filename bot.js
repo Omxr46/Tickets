@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import { Client, Collection, GatewayIntentBits, Partials, REST, Routes, Events, PermissionFlagsBits } from 'discord.js';
 import { ensureDatabase } from './db.js';
-import { generateTranscript } from './utils/transcript.js';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -286,8 +285,14 @@ const buttonHandlers = {
     }
     await interaction.deferReply({ ephemeral: true });
     const channel = interaction.channel;
-    const filePath = await generateTranscript(channel);
-    await interaction.followUp({ content: 'Transcript generated.', files: [filePath], ephemeral: true });
+    try {
+      const mod = await import('./utils/transcript.js');
+      const filePath = await mod.generateTranscript(channel);
+      await interaction.followUp({ content: 'Transcript generated.', files: [filePath], ephemeral: true });
+    } catch (err) {
+      console.error('Transcript module load error:', err);
+      await interaction.followUp({ content: 'Transcript feature is temporarily unavailable.', ephemeral: true });
+    }
   }
 };
 
