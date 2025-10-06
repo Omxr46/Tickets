@@ -8,6 +8,9 @@
     "start": "node bot.js",
     "deploy": "node deploy-commands.js"
   },
+  "engines": {
+    "node": ">=18 <21"
+  },
   "keywords": [],
   "author": "",
   "license": "MIT",
